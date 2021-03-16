@@ -1,9 +1,12 @@
 import express from 'express';
+import cookieSession from 'cookie-session';
 
 const router = express.Router();
 
 router.post('/api/users/signout', (req, res) => {
-    res.send('signout Sri Hari');
+    req.session = null;
+
+    res.send({});
 });
 
 export {

@@ -32,7 +32,16 @@ const userType = {
     },
 };
 
-const userSchema = new mongoose.Schema(userType);
+const userSchema = new mongoose.Schema(userType, {
+    toJSON: {
+        transform(doc, ret) {
+            ret.id = ret._id;
+            delete ret.password;
+            delete ret._id;
+            delete ret.__v;
+        },
+    }
+});
 
 // mongoose middlware code to execute before saving
 // defining as function to access this property of the mongoose pre save 
