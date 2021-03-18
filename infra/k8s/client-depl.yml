@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auth-depl
+  name: client-depl
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: auth
+      app: client
   template:
     metadata:
       labels:
-        app: auth
+        app: client
     spec:
       containers:
-        - name: auth
-          image: foreverithd/tkt-auth
+        - name: client
+          image: foreverithd/tkt-client
           env:
             - name: JWT_KEY
               valueFrom:
@@ -25,12 +25,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: auth-srv
+  name: client-srv
 spec:
   selector:
-    app: auth
+    app: client
   ports:
-    - name: auth
+    - name: client
       protocol: TCP
       port: 3000
       targetPort: 3000

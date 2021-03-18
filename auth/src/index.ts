@@ -17,7 +17,6 @@ const start = async () => {
         console.log('Connected to Mongo DB');
     } catch (err) {
         console.log(err);
-
     }
 
     app.listen(3000, () => {
