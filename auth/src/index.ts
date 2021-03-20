@@ -7,9 +7,13 @@ const start = async () => {
         throw new Error('JWT_KEY must be defined!');
     }
 
+    if (!process.env.MONGO_URI) {
+        throw new Error('MONGO_URI must be defined!');
+    }
+
     console.log('Starting Mongo DB');
     try {
-        await mongoose.connect('mongodb://auth-mongo-srv:27017/auth', {
+        await mongoose.connect(process.env.MONGO_URI!, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
             useCreateIndex: true
@@ -20,7 +24,7 @@ const start = async () => {
     }
 
     app.listen(3000, () => {
-        console.log('Auth is listening on 3000');
+        console.log('Auth Service is listening on 3000');
 
     });
 }

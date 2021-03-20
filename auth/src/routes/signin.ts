@@ -1,53 +1,61 @@
-import express, { Request, Response } from 'express';
-import { body } from 'express-validator';
-import jwt from 'jsonwebtoken';
+import express, { Request, Response } from 'express'
+import { body } from 'express-validator'
+import jwt from 'jsonwebtoken'
 
-import { validateRequest, BadRequestError } from '@sritkt/common';
-import { User } from '../models/user';
-import { Password } from '../services/password';
+import { validateRequest, BadRequestError } from '@sritkt/common'
+import { User } from '../models/user'
+import { Password } from '../services/password'
 
-const router = express.Router();
+const router = express.Router()
 
 const reqValidationCondn = [
-    body('email')
-        .isEmail()
-        .withMessage('Email must be valid'),
-    body('password')
-        .trim()
-        .notEmpty()
-        .withMessage('You must supply a password')
+  body('email').isEmail().withMessage('Email must be valid'),
+  body('password').trim().notEmpty().withMessage('You must supply a password'),
 ]
 
-router.post('/api/users/signin', reqValidationCondn, validateRequest, async (req: Request, res: Response) => {
-    const { email, password } = req.body;
+router.post(
+  '/api/users/signin',
+  reqValidationCondn,
+  validateRequest,
+  async (req: Request, res: Response) => {
+    const { email, password } = req.body
 
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email })
 
     if (!existingUser) {
-        throw new BadRequestError('Invalid credentials');
+      throw new BadRequestError('Invalid credentials')
     }
 
-    const passwordsMatch = await Password.compare(existingUser.password, password);
+    const passwordsMatch = await Password.compare(
+      existingUser.password,
+      password,
+    )
 
-    if(!passwordsMatch) {
-        throw new BadRequestError('Invalid credentials');
+    if (!passwordsMatch) {
+      throw new BadRequestError('Invalid credentials')
     }
 
     // Generate JWT
-    const userJwt = jwt.sign({
+    const userJwt = jwt.sign(
+      {
         id: existingUser.id,
-        email: existingUser.email
-    }, process.env.JWT_KEY!);
+        email: existingUser.email,
+      },
+      process.env.JWT_KEY!,
+    )
 
     // store it on session object
+
+    // to view jwt -- got to https://www.base64decode.org/ and paste the
+    // response header cookie element after express:sess
+
+    // copy the value of JWT from above output and decode in https://jwt.io/
     req.session = {
-        jwt: userJwt
-    };
+      jwt: userJwt,
+    }
 
-    res.status(200).send(existingUser);
+    res.status(200).send(existingUser)
+  },
+)
 
-});
-
-export {
-    router as signinRouter
-};
+export { router as signinRouter }
