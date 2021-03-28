@@ -1,23 +1,26 @@
-import express, { Request, Response } from "express";
-import { body } from "express-validator";
-import { Ticket } from "../models/ticket";
+import express, { Request, Response } from 'express';
+import { body } from 'express-validator';
 import {
   validateRequest,
   NotFoundError,
   requireAuth,
   NotAuthorizedError,
-} from "@sritkt/common";
+} from '@sritkt/common';
+
+import { Ticket } from '../models/ticket';
+import { TicketUpdatedPublisher } from '../events/publishers/ticket-updated-publisher';
+import { natsWrapper } from '../nats-wrapper';
 
 const router = express.Router();
 const validationCriteria = [
-  body("title").not().isEmail().withMessage("Title is required"),
-  body("price")
+  body('title').not().isEmail().withMessage('Title is required'),
+  body('price')
     .isFloat({ gt: 0 })
-    .withMessage("Price must be provided and must be greater than 0"),
+    .withMessage('Price must be provided and must be greater than 0'),
 ];
 
 router.put(
-  "/api/tickets/:id",
+  '/api/tickets/:id',
   requireAuth,
   validationCriteria,
   async (req: Request, res: Response) => {
@@ -33,6 +36,13 @@ router.put(
     });
 
     await ticket.save();
+
+    new TicketUpdatedPublisher(natsWrapper.client).publish({
+      id: ticket.id,
+      title: ticket.title,
+      price: parseFloat(ticket.price),
+      userId: ticket.userId,
+    });
 
     res.send(ticket);
   }

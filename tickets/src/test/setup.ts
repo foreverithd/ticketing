@@ -1,9 +1,9 @@
-import { MongoMemoryServer } from "mongodb-memory-server";
-import mongoose from "mongoose";
-import request from "supertest";
-import jwt from "jsonwebtoken";
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import mongoose from 'mongoose';
+import request from 'supertest';
+import jwt from 'jsonwebtoken';
 
-import { app } from "../app";
+import { app } from '../app';
 
 declare global {
   namespace NodeJS {
@@ -14,9 +14,11 @@ declare global {
 }
 
 let mongo: any;
+jest.mock('../nats-wrapper');
 
 beforeAll(async () => {
-  process.env.JWT_KEY = "cheeti";
+  jest.clearAllMocks();
+  process.env.JWT_KEY = 'cheeti';
 
   mongo = new MongoMemoryServer();
   const mongoUri = await mongo.getUri();
@@ -24,6 +26,9 @@ beforeAll(async () => {
   await mongoose.connect(mongoUri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    useCreateIndex: true,
+    connectTimeoutMS: 30000,
+    keepAlive: true,
   });
 });
 
@@ -44,7 +49,7 @@ global.signup = () => {
   // build a JWT payload. { id, email}
   const payload = {
     id: new mongoose.Types.ObjectId().toHexString(),
-    email: "hello@gmail.com",
+    email: 'hello@gmail.com',
   };
 
   // creat a JWT
@@ -57,7 +62,7 @@ global.signup = () => {
   const sessionJSON = JSON.stringify(session);
 
   // take json and encode it as base65
-  const base64 = Buffer.from(sessionJSON).toString("base64");
+  const base64 = Buffer.from(sessionJSON).toString('base64');
 
   // return a string thats the cookie with the encoded data
   const cookie = [`express:sess=${base64}`];
