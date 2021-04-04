@@ -18,22 +18,23 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@sritkt/common": "^1.0.6",
+    "@sritkt/common": "^1.0.13",
     "@types/cookie-session": "^2.0.42",
     "@types/express": "^4.17.3",
     "@types/jsonwebtoken": "^8.5.0",
     "@types/mongoose": "^5.10.3",
+    "@types/node": "^13.11.1",
     "cookie-session": "^1.4.0",
     "express": "^4.17.1",
     "express-async-errors": "^3.1.1",
     "express-validator": "^6.10.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.11.19",
+    "mongoose-update-if-current": "^1.4.0",
+    "node-nats-streaming": "^0.2.6",
     "nodemon": "^2.0.2",
     "ts-node-dev": "^1.0.0-pre.44",
-    "typescript": "^3.8.3",
-    "@types/node": "^13.11.1",
-    "node-nats-streaming": "^0.2.6"
+    "typescript": "^3.8.3"
   },
   "devDependencies": {
     "@types/jest": "^26.0.20",

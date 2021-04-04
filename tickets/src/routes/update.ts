@@ -5,6 +5,7 @@ import {
   NotFoundError,
   requireAuth,
   NotAuthorizedError,
+  BadRequestError,
 } from '@sritkt/common';
 
 import { Ticket } from '../models/ticket';
@@ -28,6 +29,9 @@ router.put(
 
     if (!ticket) throw new NotFoundError();
 
+    if (ticket.orderId)
+      throw new BadRequestError('Cannot edit a reserved ticket');
+
     if (ticket.userId !== req.currentUser!.id) throw new NotAuthorizedError();
 
     ticket.set({
@@ -40,8 +44,9 @@ router.put(
     new TicketUpdatedPublisher(natsWrapper.client).publish({
       id: ticket.id,
       title: ticket.title,
-      price: parseFloat(ticket.price),
+      price: ticket.price,
       userId: ticket.userId,
+      version: ticket.version,
     });
 
     res.send(ticket);

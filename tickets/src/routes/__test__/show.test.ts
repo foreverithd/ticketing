@@ -1,20 +1,20 @@
-import request from "supertest";
-import mongoose, { mongo } from "mongoose";
+import request from 'supertest';
+import mongoose, { mongo } from 'mongoose';
 
-import { app } from "../../app";
+import { app } from '../../app';
 
-it("should return 404 if ticket not found", async () => {
+it('should return 404 if ticket not found', async () => {
   const id = new mongoose.Types.ObjectId().toHexString();
   await request(app).get(`/api/tickets/${id}`).send().expect(404);
 });
 
-it("returns the ticket if the ticket is found", async () => {
-  const price = "20";
-  const title = "hello";
+it('returns the ticket if the ticket is found', async () => {
+  const price = 20;
+  const title = 'hello';
   // add in a check to make sure a ticket was saved
   const tktCreation = await request(app)
-    .post("/api/tickets")
-    .set("Cookie", global.signup())
+    .post('/api/tickets')
+    .set('Cookie', global.signup())
     .send({
       title,
       price,
